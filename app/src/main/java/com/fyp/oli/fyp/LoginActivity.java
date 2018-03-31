@@ -49,17 +49,17 @@ public class LoginActivity extends BaseActivity{
         }
 
         signInButton = findViewById(R.id.login_button);
-        registerButton = (Button) findViewById(R.id.register_button);
-        resetButton = (Button) findViewById(R.id.reset_button);
-        inputEmail = (AutoCompleteTextView) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
+        registerButton = findViewById(R.id.register_button);
+        resetButton = findViewById(R.id.reset_button);
+        inputEmail =  findViewById(R.id.email);
+        inputPassword = findViewById(R.id.password);
         //progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         registerButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick (View v){
-                //Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+                startActivity(intent);
             }
         });
 

@@ -127,8 +127,8 @@ public class MainActivity extends BaseActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 signOut();
-                               // Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                               // startActivity(intent);
+                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                startActivity(intent);
                                 finish();
                             }
                         });
