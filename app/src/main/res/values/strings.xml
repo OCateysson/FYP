@@ -1,0 +1,96 @@
+<resources>
+    <string name="app_name">FYP_Project_V0.1</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Enter Email</string>
+    <string name="prompt_password">Enter Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="empty_email">Please Enter Email Address!</string>
+    <string name="empty_password">Please Enter Password!</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="register">Register</string>
+    <string name="reset">Reset Password</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="confirm_data">Please Confirm</string>
+    <string name="title_activity_login">MainActivity</string>
+
+
+    <!-- Strings related to main activity -->
+    <string name="title_activity_main">MainActivity</string>
+    <string name="welcome">Welcome User,</string>
+    <string name="home">Homepage</string>
+    <string name="exercise">Exercises</string>
+    <string name="logout">Logout</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
+    <string name="cancel_message">Cancel</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- Strings related to homepage activity -->
+    <string name="username">Name: USERS NAME</string>
+    <string name="heartRateText">Heart Rate: -- BPM</string>
+    <string name="bPressureText">Blood Pressure: -- mm Hg</string>
+    <string name="age">Age: --</string>
+    <string name="editPageButton">Edit Page</string>
+    <string name="heartRateButton">Record Heart Rate</string>
+    <string name="bloodPressureButton">Record Blood Pressure</string>
+
+    <!-- Strings related to forum activity -->
+    <string name="forumHeader">Forum Page</string>
+    <string name="body_new_post">Share your Thoughts...</string>
+    <string name="title_new_post">Title...</string>
+    <string name="write_comment">Write Comment...</string>
+    <string name="post">Post</string>
+
+    <!-- Edit Page -->
+    <string name="submit">Submit</string>
+    <string name="name_input">Enter Name</string>
+    <string name="age_input">Enter Age</string>
+    <string name="bpm_input">Heart Rate (Optional)</string>
+    <string name="bp_input">Blood Pressure (Optional)</string>
+    <string name="edit_message">Enter details you wish to Change</string>
+    <string name="confirm">Confirm</string>
+
+    <string name="data_updated">Data has been Successfully updated!</string>
+
+    <!-- Strings related to forum activity -->
+    <string name="exerciseChoice">Please Choose Category of Exercise</string>
+    <string name="exercise_prompt">Category:</string>
+    <string-array name="exercise_array">
+        <item>Oral</item>
+        <item>Physical</item>
+        <item>Cognitive</item>
+        <item>Miscellaneous</item>
+    </string-array>
+
+    <!-- Exercise Activity -->
+    <string name="tab_my">My Workouts</string>
+    <string name="tab_log">Log Workout</string>
+    <string name="tab_pre">Pre-Defined Workouts</string>
+    <string name="tab_all">All Exercises</string>
+
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nec condimentum ante, quis mattis mi. Proin ut rhoncus libero, ac euismod neque. Ut suscipit, enim a facilisis consequat, orci lacus venenatis orci, at ultricies orci nulla sed ex. In condimentum viverra velit, eget feugiat libero imperdiet vel. Aenean pretium, lectus vitae bibendum bibendum, diam turpis convallis eros, quis tristique leo sapien at ipsum. Praesent eu odio id nulla lobortis auctor. Donec eget dolor eget nisl euismod commodo vel a lacus. Quisque ut justo vitae urna pharetra accumsan. Etiam dignissim neque iaculis mauris viverra, blandit rhoncus odio porttitor. Phasellus nibh arcu.</string>
+    <string name="title_activity_post_detail">PostDetailActivity</string>
+
+    <string-array name="exercise1">
+        <item id="name"> </item>
+        <item id="description"> </item>
+        <item id="name"> </item>
+    </string-array>
+    <string name="title_activity_exercise">ExerciseActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="sets">Sets</string>
+    <string name="reps">Reps</string>
+    <string name="description_exercise">Description of Exercise</string>
+    <string name="exercise_title">Title of Exercise</string>
+
+</resources>
