@@ -92,5 +92,6 @@
     <string name="reps">Reps</string>
     <string name="description_exercise">Description of Exercise</string>
     <string name="exercise_title">Title of Exercise</string>
+    <string name="title_activity_register">RegisterActivity</string>
 
 </resources>

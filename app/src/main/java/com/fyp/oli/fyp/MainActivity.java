@@ -123,7 +123,7 @@ public class MainActivity extends BaseActivity {
                 builder1.setMessage("Logout?");
                 builder1.setCancelable(true);
 
-                builder1.setPositiveButton("ogout?",
+                builder1.setPositiveButton(R.string.logout_message,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 signOut();
@@ -133,7 +133,7 @@ public class MainActivity extends BaseActivity {
                             }
                         });
 
-                builder1.setNegativeButton("Cancle?",
+                builder1.setNegativeButton(R.string.cancel_message,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
