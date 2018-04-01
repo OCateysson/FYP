@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorPrimary">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="30dp"
+        android:background="@drawable/layout_shape"
+        android:orientation="vertical"
+        android:paddingTop="40dp">
+
+        <ImageView
+            android:id="@+id/user_picture"
+            android:layout_width="134dp"
+            android:layout_height="120dp"
+            android:layout_gravity="top|center"
+            app:srcCompat="@drawable/no_pic" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
+            android:background="#c0c0c0" />
+
+        <TextView
+            android:id="@+id/home_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:gravity="left|fill_vertical|center"
+            android:text="@string/username"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/home_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:gravity="left|fill_vertical|center"
+            android:text="@string/age"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/home_heartRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:gravity="left|fill_vertical|center"
+            android:text="@string/heartRateText"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/home_bp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:gravity="left|fill_vertical|center"
+            android:text="@string/bPressureText"
+            android:textSize="18sp" />
+
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="40dp"
+        android:layout_marginRight="40dp"
+        android:baselineAlignBottom="false"
+        android:clickable="true"
+        android:scaleType="center"
+        app:backgroundTint="#2196f3"
+        app:srcCompat="@drawable/edit_icon2" />
+
+</FrameLayout>
