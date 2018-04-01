@@ -92,8 +92,8 @@ public class MainActivity extends BaseActivity {
         hButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(MainActivity.this, HomepageActivity.class);
-               // startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, Home.class);
+                startActivity(intent);
             }
         });
 
