@@ -110,8 +110,8 @@ public class MainActivity extends BaseActivity {
         fButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // Intent intent = new Intent(MainActivity.this, ForumFragment.class);
-                //startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, ForumQuery.class);
+                startActivity(intent);
             }
         });
 
