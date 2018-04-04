@@ -1,6 +1,8 @@
 package com.fyp.oli.fyp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -9,11 +11,15 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TabHost;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -33,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
+
 public class ExerciseActivity extends BaseActivity {
 
     private static final String TAG = "ExerciseActivity";
@@ -44,9 +52,11 @@ public class ExerciseActivity extends BaseActivity {
     /*private DatabaseReference mDatabase;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
-    //private FirebaseRecyclerAdapter<Exercise,ExerciseViewHolder> mAdapter;
+    //private FirebaseRecyclerAdapter<Exercise,ExerciseViewHolder> mAdapter;*/
     private List<Exercise> exerciseList;
-    */
+    private Context context;
+    DatabaseReference databaseReference;
+
     private FirestoreRecyclerAdapter<Exercise, ExerciseHolder> mAdapter;
     private FirebaseFirestore mDatabase;
     private ListenerRegistration firestoreListener;
@@ -83,7 +93,7 @@ public class ExerciseActivity extends BaseActivity {
 
 
         //loadExercises();
-        Query exerciseQuery = mDatabase.collection("exercises");
+        final Query exerciseQuery = mDatabase.collection("exercises");
 
         FirestoreRecyclerOptions<Exercise> options = new FirestoreRecyclerOptions.Builder<Exercise>()
                 .setQuery(exerciseQuery, Exercise.class)
@@ -98,10 +108,18 @@ public class ExerciseActivity extends BaseActivity {
 
             @Override
             public void onBindViewHolder(ExerciseHolder holder, int position, Exercise model) {
+
+                String uri = model.getImage();
+                Log.e(TAG, "URI = " + uri);
+
                 holder.title.setText(model.getTitle());
                 holder.desc.setText(model.getDescr());
-                holder.sets.setText(model.getSets());
-                holder.reps.setText(model.getReps());
+                holder.sets.setText("Sets: " + model.getSets());
+                holder.reps.setText("Reps: " + model.getReps());
+                //holder.setExerciseImage(uri);
+                Glide.with(getApplicationContext())
+                        .load(model.getImage())
+                        .into(holder.imageView);
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -161,4 +179,5 @@ public class ExerciseActivity extends BaseActivity {
         super.onStop();
         mAdapter.stopListening();
     }
+
 }

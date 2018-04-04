@@ -18,7 +18,6 @@ public class Exercise {
         this.descr = descr;
         this.sets = sets;
         this.reps = reps;
-        //this.imageUrl = imageUrl;
     }
 
     public void setDesc(){
@@ -56,16 +55,4 @@ public class Exercise {
     public void setImage() {
         this.imageurl = imageurl;
     }
-
-    public Map<String, Object> toMap(){
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("title", this.title);
-        result.put("descr", this.descr);
-        result.put("imageurl", this.imageurl);
-        result.put("sets", this.sets);
-        result.put("results", this.reps);
-        return result;
-    }
-
-
 }
