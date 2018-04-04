@@ -30,7 +30,9 @@
         <activity android:name=".Home" />
         <activity android:name=".EditPageActivity" />
         <activity android:name=".ForumQuery" />
-        <activity android:name=".PostDetailActivity"></activity>
+        <activity android:name=".PostDetailActivity" />
+        <activity android:name=".ExerciseActivity" />
+        <activity android:name=".ExerciseDetail"></activity>
     </application>
 
 </manifest>

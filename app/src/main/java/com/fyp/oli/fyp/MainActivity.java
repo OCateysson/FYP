@@ -101,8 +101,8 @@ public class MainActivity extends BaseActivity {
         eButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(MainActivity.this, ExerciseActivity.class);
-               // startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, ExerciseActivity.class);
+                startActivity(intent);
             }
         });
 
