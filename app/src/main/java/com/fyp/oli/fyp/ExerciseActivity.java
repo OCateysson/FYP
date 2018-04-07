@@ -26,6 +26,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -99,6 +101,29 @@ public class ExerciseActivity extends BaseActivity {
                 .setQuery(exerciseQuery, Exercise.class)
                 .build();
 
+        /*
+            Loading the exercises into the exerciseList variable
+         */
+        firestoreListener = mDatabase.collection("exercises")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.e(TAG, "Listen failed!", e);
+                            return;
+                        }
+
+                        exerciseList = new ArrayList<>();
+
+                        for (DocumentSnapshot doc : documentSnapshots) {
+                            Exercise exercise = doc.toObject(Exercise.class);
+                            exercise.setId(doc.getId());
+                            //.setId(doc.getId());
+                            exerciseList.add(exercise);
+                        }
+                    }
+                });
+
         mAdapter = new FirestoreRecyclerAdapter<Exercise, ExerciseHolder>(options) {
             @Override
             public ExerciseHolder onCreateViewHolder(ViewGroup group, int i) {
@@ -107,8 +132,8 @@ public class ExerciseActivity extends BaseActivity {
             }
 
             @Override
-            public void onBindViewHolder(ExerciseHolder holder, int position, Exercise model) {
-
+            public void onBindViewHolder(final ExerciseHolder holder, final int position, final Exercise model) {
+                final Exercise exercise = exerciseList.get(position);
                 String uri = model.getImage();
                 Log.e(TAG, "URI = " + uri);
 
@@ -116,7 +141,6 @@ public class ExerciseActivity extends BaseActivity {
                 holder.desc.setText(model.getDescr());
                 holder.sets.setText("Sets: " + model.getSets());
                 holder.reps.setText("Reps: " + model.getReps());
-                //holder.setExerciseImage(uri);
                 Glide.with(getApplicationContext())
                         .load(model.getImage())
                         .into(holder.imageView);
@@ -125,7 +149,17 @@ public class ExerciseActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(ExerciseActivity.this, ExerciseDetail.class);
+                        intent.putExtra("ExercisePic", exercise.getImage());
+                        intent.putExtra("ExerciseId", exercise.getId());
+                        intent.putExtra("ExerciseTitle", exercise.getTitle());
+                        intent.putExtra("ExerciseDescr", exercise.getDescr());
+                        intent.putExtra("ExerciseSets", exercise.getSets());
+                        intent.putExtra("ExerciseReps", exercise.getReps());
+                        // intent.putExtra(ExerciseDetail.EXTRA_EXERCISE_KEY, exerciseKey);
                         startActivity(intent);
+
+                        Log.e(TAG, "ID = " + exercise.getId() + "\nTitle= " + exercise.getTitle()
+                        + "\n = " + exercise.getSets()+ "\n " + exercise.getReps()+ "\n " + exercise.getDescr());
                     }
                 });
             }

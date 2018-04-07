@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <ImageView
         android:id="@+id/fExerciseImage"
         android:layout_width="wrap_content"
@@ -11,6 +12,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
+        android:maxHeight="80dp"
+        android:maxWidth="80dp"
         app:srcCompat="@drawable/exercise_icon" />
 
     <View
@@ -39,7 +42,9 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/fExerciseImage"
         android:layout_alignStart="@+id/fExerciseImage"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/exerciseTitle"
+        android:layout_centerVertical="false"
+        android:paddingRight="50dp"
         android:text="TextView" />
 
     <TextView

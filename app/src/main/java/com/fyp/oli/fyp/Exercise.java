@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Exercise {
-    String title;
+    String title, id;
     String descr;
     String sets;
     String reps;
@@ -12,13 +12,17 @@ public class Exercise {
 
     public Exercise(){}
 
-    public Exercise(String title, String descr, String sets, String reps, String imageurl){
+    public Exercise(String id, String title, String descr, String sets, String reps, String imageurl){
+        this.id = id;
         this.imageurl = imageurl;
         this.title = title;
         this.descr = descr;
         this.sets = sets;
         this.reps = reps;
     }
+
+    public void setId(String id){this.id = this.id;}
+    public String getId(){return id;}
 
     public void setDesc(){
         this.descr = descr;

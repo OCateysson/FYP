@@ -1,16 +1,10 @@
 package com.fyp.oli.fyp;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.List;
 
 public class ExerciseHolder extends RecyclerView.ViewHolder {
     View mView;
