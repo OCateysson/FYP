@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fyp.oli.fyp">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -32,7 +36,14 @@
         <activity android:name=".ForumQuery" />
         <activity android:name=".PostDetailActivity" />
         <activity android:name=".ExerciseActivity" />
-        <activity android:name=".ExerciseDetail"></activity>
+        <activity android:name=".ExerciseDetail" />
+        <activity android:name=".LogWorkout" />
+        <activity android:name=".CreateExercise" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" /> <!-- optional (needed if default theme has no action bar) -->
+        <activity android:name=".WorkoutPlans" />
+        <activity android:name=".ExerciseList" />
     </application>
 
 </manifest>

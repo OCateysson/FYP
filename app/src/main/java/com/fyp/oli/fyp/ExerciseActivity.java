@@ -1,5 +1,6 @@
 package com.fyp.oli.fyp;
 
+import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -43,7 +45,7 @@ import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
-public class ExerciseActivity extends BaseActivity {
+public class ExerciseActivity extends TabActivity {
 
     private static final String TAG = "ExerciseActivity";
     /**
@@ -73,145 +75,44 @@ public class ExerciseActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise);
-        mDatabase = FirebaseFirestore.getInstance();
-        /**
-         * End of Firebase Storage
-         */
-
-        /*mDatabase = FirebaseDatabase.getInstance().getReference();
-        mRecycler = findViewById(R.id.exercises_list);
-        mManager = new LinearLayoutManager(ExerciseActivity.this);
-        mManager.setReverseLayout(true);
-        mManager.setStackFromEnd(true);
-        mRecycler.setLayoutManager(mManager);*/
+        //mDatabase = FirebaseFirestore.getInstance();
         /**
          * Firestore
          */
-        mRecycler = findViewById(R.id.exercises_list);
-        mManager = new LinearLayoutManager(ExerciseActivity.this);
-        mManager.setReverseLayout(true);
-        mManager.setStackFromEnd(true);
-        mRecycler.setLayoutManager(mManager);
-
-
-        //loadExercises();
-        final Query exerciseQuery = mDatabase.collection("exercises");
-
-        FirestoreRecyclerOptions<Exercise> options = new FirestoreRecyclerOptions.Builder<Exercise>()
-                .setQuery(exerciseQuery, Exercise.class)
-                .build();
-
-        /*
-            Loading the exercises into the exerciseList variable
-         */
-        firestoreListener = mDatabase.collection("exercises")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.e(TAG, "Listen failed!", e);
-                            return;
-                        }
-
-                        exerciseList = new ArrayList<>();
-
-                        for (DocumentSnapshot doc : documentSnapshots) {
-                            Exercise exercise = doc.toObject(Exercise.class);
-                            exercise.setId(doc.getId());
-                            //.setId(doc.getId());
-                            exerciseList.add(exercise);
-                        }
-                    }
-                });
-
-        mAdapter = new FirestoreRecyclerAdapter<Exercise, ExerciseHolder>(options) {
-            @Override
-            public ExerciseHolder onCreateViewHolder(ViewGroup group, int i) {
-                LayoutInflater inflater = LayoutInflater.from(group.getContext());
-                return new ExerciseHolder(inflater.inflate(R.layout.item_exercise, group, false));
-            }
-
-            @Override
-            public void onBindViewHolder(final ExerciseHolder holder, final int position, final Exercise model) {
-                final Exercise exercise = exerciseList.get(position);
-                String uri = model.getImage();
-                Log.e(TAG, "URI = " + uri);
-
-                holder.title.setText(model.getTitle());
-                holder.desc.setText(model.getDescr());
-                holder.sets.setText("Sets: " + model.getSets());
-                holder.reps.setText("Reps: " + model.getReps());
-                Glide.with(getApplicationContext())
-                        .load(model.getImage())
-                        .into(holder.imageView);
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(ExerciseActivity.this, ExerciseDetail.class);
-                        intent.putExtra("ExercisePic", exercise.getImage());
-                        intent.putExtra("ExerciseId", exercise.getId());
-                        intent.putExtra("ExerciseTitle", exercise.getTitle());
-                        intent.putExtra("ExerciseDescr", exercise.getDescr());
-                        intent.putExtra("ExerciseSets", exercise.getSets());
-                        intent.putExtra("ExerciseReps", exercise.getReps());
-                        // intent.putExtra(ExerciseDetail.EXTRA_EXERCISE_KEY, exerciseKey);
-                        startActivity(intent);
-
-                        Log.e(TAG, "ID = " + exercise.getId() + "\nTitle= " + exercise.getTitle()
-                        + "\n = " + exercise.getSets()+ "\n " + exercise.getReps()+ "\n " + exercise.getDescr());
-                    }
-                });
-            }
-
-            @Override
-            public void onError(FirebaseFirestoreException e) {
-                Log.e("error", e.getMessage());
-            }
-        };
-
-        mRecycler.setAdapter(mAdapter);
+        //listExercises();
 
         fab = findViewById(R.id.addExercise);
 
-        TabHost mTabHost = findViewById(R.id.tabHost);
+        TabHost mTabHost = findViewById(android.R.id.tabhost);
+        TabHost.TabSpec mSpec;
         mTabHost.setup();
 
-        TabHost.TabSpec mSpec = mTabHost.newTabSpec("All Exercises");
-        mSpec.setContent(R.id.tab1);
+        mSpec = mTabHost.newTabSpec("All Exercises");
+        Intent intent1 = new Intent(this, ExerciseList.class);
+        mSpec.setContent(intent1);
         mSpec.setIndicator("", getResources().getDrawable(R.drawable.all_exercises));
         mTabHost.addTab(mSpec);
 
         mSpec = mTabHost.newTabSpec("Plan");
-        mSpec.setContent(R.id.tab2);
+        Intent intent2 = new Intent(this, WorkoutPlans.class);
         mSpec.setIndicator("", getResources().getDrawable(R.drawable.plan));
+        mSpec.setContent(intent2);
         mTabHost.addTab(mSpec);
 
         mSpec = mTabHost.newTabSpec("Log Workout");
-        mSpec.setContent(R.id.tab3);
-        mSpec.setIndicator("", getResources().getDrawable(R.drawable.logging));
+        Intent intent3 = new Intent(this, LogWorkout.class);
+        mSpec.setIndicator("", getResources().getDrawable(R.drawable.plan));
+        mSpec.setContent(intent3);
         mTabHost.addTab(mSpec);
 
+        mTabHost.setCurrentTab(0);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(ExerciseActivity.this, NewExerciseActivity.class);
-                //startActivity(intent);
+            public void onTabChanged(String tabId) {
+                // display the name of the tab whenever a tab is changed
+                Toast.makeText(getApplicationContext(), tabId, Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAdapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mAdapter.stopListening();
-    }
-
 }
