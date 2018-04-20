@@ -181,7 +181,7 @@ public class RegisterActivity extends AppCompatActivity {
             user.put("bloodPressure", bloodPressure);
             user.put("heartRate", heartRate);
 
-            firebaseFirestore.collection("users").document(uid)
+            firebaseFirestore.collection("users").document(name)
                     .set(user)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
