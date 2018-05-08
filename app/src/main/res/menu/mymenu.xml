@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:icon="@drawable/ic_navigation_check_24"
+        android:orderInCategory="200"
+        android:title="Done"
+        android:id="@+id/finishWorkout"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/cancelWorkout"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:orderInCategory="100"
+        android:title="Cancle"
+        app:showAsAction="ifRoom" />
+
+</menu>

@@ -10,6 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -47,9 +49,10 @@ public class ChooseExercises extends AppCompatActivity {
     private ListenerRegistration firestoreListener;
     private FirebaseAuth auth;
     private int addition = 0;
+    private String n;
     private LinearLayoutManager mManager;
     private RecyclerView mRecycler;
-    private int count = 0;
+    private int count = 0, wCount = 0;
 
     private FloatingActionButton fab;
 
@@ -59,6 +62,18 @@ public class ChooseExercises extends AppCompatActivity {
         setContentView(R.layout.activity_choose_exercises);
 
         fab = findViewById(R.id.addToWorkout);
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                n= null;
+            } else {
+                n= extras.getString("workoutname");
+            }
+        } else {
+            n= (String) savedInstanceState.getSerializable("workoutname");
+        }
 
         mDatabase = FirebaseFirestore.getInstance();
         mRecycler = findViewById(R.id.choose_exercise_list);
@@ -67,6 +82,22 @@ public class ChooseExercises extends AppCompatActivity {
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
 
+
+        Log.e(TAG, "n= " +n);
+
+        mDatabase.collection("users").document(uid)
+                .collection("workoutlogs").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            wCount = task.getResult().size();
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
 
         //loadExercises();
         final Query exerciseQuery = mDatabase.collection("exercises");
@@ -105,6 +136,7 @@ public class ChooseExercises extends AppCompatActivity {
                 return new ExerciseHolder(inflater.inflate(R.layout.item_exercise, group, false));
             }
 
+
             @Override
             public void onBindViewHolder(final ExerciseHolder holder, final int position, final Exercise model) {
                 final Exercise exercise = exerciseList.get(position);
@@ -112,7 +144,7 @@ public class ChooseExercises extends AppCompatActivity {
                 //Log.e(TAG, "URI = " + uri);
                 mDatabase.collection("users").document(uid)
                         .collection("workoutlogs")
-                        .document("workout1")
+                        .document(""+n)
                         .collection("exercises").get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -141,8 +173,7 @@ public class ChooseExercises extends AppCompatActivity {
                     public void onClick(View v) {
                         Map<String,String> ex = new HashMap<>();
 
-                        Log.e(TAG, "ID = " + exercise.getId() + "\nTitle= " + exercise.getTitle()
-                                + "\n = " + exercise.getSets() + "\n " + exercise.getReps() + "\n " + exercise.getDescr());
+                        Log.e(TAG, "count = " + count +"\nwCount = " + wCount);
 
                         ex.put("title", exercise.getTitle());
                         ex.put("description", exercise.getDescr());
@@ -151,7 +182,7 @@ public class ChooseExercises extends AppCompatActivity {
 
                         mDatabase.collection("users").document(uid)
                                 .collection("workoutlogs")
-                                .document("workout1")
+                                .document(""+n)
                                 .collection("exercises")
                                 .document("exercise"+count)
                                 .set(ex)
@@ -163,7 +194,8 @@ public class ChooseExercises extends AppCompatActivity {
                                 }).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                Intent intent = new Intent(ChooseExercises.this, WorkoutPlans.class);
+                                Intent intent = new Intent(ChooseExercises.this, CreateWorkout.class);
+                                intent.putExtra("workoutname", n);
                                 startActivity(intent);
                             }
                         });
@@ -192,5 +224,4 @@ public class ChooseExercises extends AppCompatActivity {
         super.onStop();
         mAdapter.stopListening();
     }
-
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FYP_Project_V0.1</string>
+    <string name="app_name">Win the Stroke</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Enter Email</string>

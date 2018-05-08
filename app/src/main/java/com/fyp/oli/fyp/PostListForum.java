@@ -113,7 +113,7 @@ public abstract class PostListForum extends BaseActivity{
     }
 
     private void createNewPost() {
-        //startActivity(new Intent(PostListForum.this, NewPostActivity.class));
+        startActivity(new Intent(PostListForum.this, NewPostActivity.class));
     }
 
     // [START post_stars_transaction]

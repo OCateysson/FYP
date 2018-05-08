@@ -1,9 +1,12 @@
 package com.fyp.oli.fyp;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.drm.DrmStore;
+import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -12,13 +15,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,82 +37,83 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class LogWorkout extends AppCompatActivity {
+public class CreateWorkout extends LogWorkout {
 
-    private FloatingActionButton fab;
     private static final String TAG = "ExerciseList";
-    private List<Workout> workoutList;
-    final Context mContext = this;
-    DatabaseReference databaseReference;
-    FirebaseAuth auth;
-
+    private List<Exercise> exerciseList;
     private FirestoreRecyclerAdapter<Exercise, ExerciseHolder> mAdapter;
     private FirebaseFirestore mDatabase;
+    private Query workoutLogQuery;
     private ListenerRegistration firestoreListener;
+    private String n;
 
     private LinearLayoutManager mManager;
     private RecyclerView mRecycler;
+    private FloatingActionButton fab;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_log_workout);
-
-        fab = findViewById(R.id.fab_log_workout);
-
+        setContentView(R.layout.activity_create_workout);
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE
+                                | ActionBar.DISPLAY_SHOW_CUSTOM);
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                n= null;
+            } else {
+                n= extras.getString("workoutname");
+            }
+        } else {
+            n= (String) savedInstanceState.getSerializable("workoutname");
+        }
+
+        fab = findViewById(R.id.fab_add_exercise_to_workout);
         mDatabase = FirebaseFirestore.getInstance();
-        mRecycler = findViewById(R.id.workout_list);
-        mManager = new LinearLayoutManager(LogWorkout.this);
+        mRecycler = findViewById(R.id.workout_exercise_list);
+        mManager = new LinearLayoutManager(CreateWorkout.this);
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
 
+        final String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                View promptsView  = inflater.inflate(R.layout.prompt_name,null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setView(promptsView);
-                final EditText wName = promptsView.findViewById(R.id.promptWorkoutName);
-
-                builder.setCancelable(false)
-                        .setPositiveButton("Confirm",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(LogWorkout.this, ChooseExercises.class);
-                                        intent.putExtra("workoutname", wName.getText().toString());
-                                        startActivity(intent);
-                                    }
-                                })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
+                Intent intent = new Intent(CreateWorkout.this, ChooseExercises.class);
+                intent.putExtra("workoutname", n);
+                startActivity(intent);
             }
         });
 
-        Query workoutLogQuery = mDatabase.collection("users").document(uid).collection("workoutlogs");
+
+        workoutLogQuery = mDatabase.collection("users").document(uid).collection("workoutlogs")
+                .document(""+n).collection("exercises");
 
         Log.e(TAG, "Query = " + workoutLogQuery);
-        FirestoreRecyclerOptions<Workout> options = new FirestoreRecyclerOptions.Builder<Workout>()
-                .setQuery(workoutLogQuery, Workout.class)
+        FirestoreRecyclerOptions<Exercise> options = new FirestoreRecyclerOptions.Builder<Exercise>()
+                .setQuery(workoutLogQuery, Exercise.class)
                 .build();
 
         /*
             Loading the exercises into the exerciseList variable
          */
         firestoreListener = mDatabase.collection("exercises").document(uid).collection("workoutlogs")
+                .document(""+n).collection("exercises")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
@@ -113,32 +122,33 @@ public class LogWorkout extends AppCompatActivity {
                             return;
                         }
 
-                        workoutList = new ArrayList<>();
+                        exerciseList = new ArrayList<>();
 
                         for (DocumentSnapshot doc : documentSnapshots) {
-                            Workout workout = doc.toObject(Workout.class);
-                            workout.setId(doc.getId());
+                            Exercise exercise = doc.toObject(Exercise.class);
+                            exercise.setId(doc.getId());
                             //.setId(doc.getId());
-                            workoutList.add(workout);
+                            exerciseList.add(exercise);
                         }
                     }
                 });
 
-        /*mAdapter = new FirestoreRecyclerAdapter<Workout, WorkoutHolder>(options) {
+        mAdapter = new FirestoreRecyclerAdapter<Exercise, ExerciseHolder>(options) {
             @Override
-            public WorkoutHolder onCreateViewHolder(ViewGroup group, int i) {
+            public ExerciseHolder onCreateViewHolder(ViewGroup group, int i) {
                 LayoutInflater inflater = LayoutInflater.from(group.getContext());
-                return new WorkoutHolder(inflater.inflate(R.layout.item_exercise, group, false));
+                return new ExerciseHolder(inflater.inflate(R.layout.item_exercise, group, false));
             }
 
             @Override
-            public void onBindViewHolder(final WorkoutHolder holder, final int position, final Workout model) {
-
+            public void onBindViewHolder(final ExerciseHolder holder, final int position, final Exercise model) {
+                String uri = model.getImage();
+                Log.e(TAG, "URI = " + uri);
 
                 holder.title.setText(model.getTitle());
                 holder.desc.setText(model.getDescr());
 
-                *//*holder.itemView.setOnClickListener(new View.OnClickListener() {
+                /*holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(WorkoutPlans.this, ExerciseDetail.class);
@@ -154,15 +164,14 @@ public class LogWorkout extends AppCompatActivity {
                         Log.e(TAG, "ID = " + exercise.getId() + "\nTitle= " + exercise.getTitle()
                                 + "\n = " + exercise.getSets()+ "\n " + exercise.getReps()+ "\n " + exercise.getDescr());
                     }
-                });*//*
+                });*/
             }
 
             @Override
             public void onError(FirebaseFirestoreException e) {
                 Log.e("error", e.getMessage());
             }
-
-        };*/
+        };
 
         mRecycler.setAdapter(mAdapter);
     }
@@ -178,5 +187,25 @@ public class LogWorkout extends AppCompatActivity {
         super.onStop();
         mAdapter.stopListening();
     }
-}
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.mymenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.finishWorkout) {
+            Intent intent = new Intent(this, LogWorkout.class);
+            startActivity(intent);
+        }
+        if (id == R.id.cancelWorkout) {
+            Intent intent = new Intent(this, LogWorkout.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}

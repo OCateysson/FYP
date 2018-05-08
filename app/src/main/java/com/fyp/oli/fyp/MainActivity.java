@@ -120,10 +120,10 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-                builder1.setMessage("Logout?");
+                builder1.setMessage(R.string.logout_message);
                 builder1.setCancelable(true);
 
-                builder1.setPositiveButton(R.string.logout_message,
+                builder1.setPositiveButton("Logout",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 signOut();
