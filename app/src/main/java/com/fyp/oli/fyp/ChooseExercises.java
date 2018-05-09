@@ -1,6 +1,8 @@
 package com.fyp.oli.fyp;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -14,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -41,7 +44,7 @@ public class ChooseExercises extends AppCompatActivity {
 
     private static final String TAG = "ExerciseList";
     private List<Exercise> exerciseList;
-    private Context context;
+    final Context mContext = this;
     DatabaseReference databaseReference;
 
     private FirestoreRecyclerAdapter<Exercise, ExerciseHolder> mAdapter;
@@ -49,10 +52,11 @@ public class ChooseExercises extends AppCompatActivity {
     private ListenerRegistration firestoreListener;
     private FirebaseAuth auth;
     private int addition = 0;
-    private String n;
+    private String n, c;
     private LinearLayoutManager mManager;
     private RecyclerView mRecycler;
     private int count = 0, wCount = 0;
+    Map<String,String> ex;
 
     private FloatingActionButton fab;
 
@@ -81,9 +85,6 @@ public class ChooseExercises extends AppCompatActivity {
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
-
-
-        Log.e(TAG, "n= " +n);
 
         mDatabase.collection("users").document(uid)
                 .collection("workoutlogs").get()
@@ -171,35 +172,57 @@ public class ChooseExercises extends AppCompatActivity {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Map<String,String> ex = new HashMap<>();
+                        LayoutInflater inflater = LayoutInflater.from(mContext);
+                        View promptsView  = inflater.inflate(R.layout.prompt_sets_reps,null);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                        builder.setView(promptsView);
+                        final EditText wName = promptsView.findViewById(R.id.promptSets);
+                        final EditText wReps = promptsView.findViewById(R.id.promptReps);
 
-                        Log.e(TAG, "count = " + count +"\nwCount = " + wCount);
+                        builder.setCancelable(false)
+                                .setPositiveButton("Confirm",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                ex = new HashMap<>();
 
-                        ex.put("title", exercise.getTitle());
-                        ex.put("description", exercise.getDescr());
-                        int i =0;
-                        i++;
 
-                        mDatabase.collection("users").document(uid)
-                                .collection("workoutlogs")
-                                .document(""+n)
-                                .collection("exercises")
-                                .document("exercise"+count)
-                                .set(ex)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.e(TAG, "Exercise Added to Workout");
-                                    }
-                                }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                Log.e(TAG, "count = " + count +"\nwCount = " + wCount);
+
+                                                ex.put("title", exercise.getTitle());
+                                                ex.put("description", exercise.getDescr());
+                                                ex.put("imageurl", exercise.getImage());
+                                                ex.put("sets", wName.getText().toString());
+                                                ex.put("reps", wReps.getText().toString());
+
+                                                mDatabase.collection("users").document(uid)
+                                                        .collection("workoutlogs")
+                                                        .document(""+n)
+                                                        .collection("exercises")
+                                                        .document("exercise"+count)
+                                                        .set(ex)
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.e(TAG, "Exercise Added to Workout");
+                                                            }
+                                                        }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        Intent intent = new Intent(ChooseExercises.this, CreateWorkout.class);
+                                                        intent.putExtra("workoutname", n);
+                                                        startActivity(intent);
+                                                    }
+                                                });
+                                            }}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Intent intent = new Intent(ChooseExercises.this, CreateWorkout.class);
-                                intent.putExtra("workoutname", n);
-                                startActivity(intent);
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
                             }
                         });
 
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
 
                     }
                 });

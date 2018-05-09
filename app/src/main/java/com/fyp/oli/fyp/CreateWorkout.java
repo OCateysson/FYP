@@ -23,6 +23,7 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,8 +41,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class CreateWorkout extends LogWorkout {
 
@@ -52,6 +55,7 @@ public class CreateWorkout extends LogWorkout {
     private Query workoutLogQuery;
     private ListenerRegistration firestoreListener;
     private String n;
+    private  String uid;
 
     private LinearLayoutManager mManager;
     private RecyclerView mRecycler;
@@ -64,7 +68,7 @@ public class CreateWorkout extends LogWorkout {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_workout);
-        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE
@@ -147,24 +151,12 @@ public class CreateWorkout extends LogWorkout {
 
                 holder.title.setText(model.getTitle());
                 holder.desc.setText(model.getDescr());
+                Glide.with(getApplicationContext())
+                        .load(model.getImage())
+                        .into(holder.imageView);
+                holder.sets.setText("Sets: " + model.getSets());
+                holder.reps.setText("Reps: " + model.getReps());
 
-                /*holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(WorkoutPlans.this, ExerciseDetail.class);
-                        intent.putExtra("ExercisePic", exercise.getImage());
-                        intent.putExtra("ExerciseId", exercise.getId());
-                        intent.putExtra("ExerciseTitle", exercise.getTitle());
-                        intent.putExtra("ExerciseDescr", exercise.getDescr());
-                        intent.putExtra("ExerciseSets", exercise.getSets());
-                        intent.putExtra("ExerciseReps", exercise.getReps());
-                        // intent.putExtra(ExerciseDetail.EXTRA_EXERCISE_KEY, exerciseKey);
-                        startActivity(intent);
-
-                        Log.e(TAG, "ID = " + exercise.getId() + "\nTitle= " + exercise.getTitle()
-                                + "\n = " + exercise.getSets()+ "\n " + exercise.getReps()+ "\n " + exercise.getDescr());
-                    }
-                });*/
             }
 
             @Override
@@ -199,11 +191,44 @@ public class CreateWorkout extends LogWorkout {
         int id = item.getItemId();
 
         if (id == R.id.finishWorkout) {
-            Intent intent = new Intent(this, LogWorkout.class);
-            startActivity(intent);
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View promptsView  = inflater.inflate(R.layout.prompt_comment,null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            builder.setView(promptsView);
+
+            final EditText comment = promptsView.findViewById(R.id.promptComment);
+            //String c = comment.getText().toString();
+
+
+            builder.setCancelable(false)
+                    .setPositiveButton("Confirm",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Map<String,String> wn = new HashMap<>();
+                                    wn.put("comment", comment.getText().toString());
+                                    wn.put("title",n);
+
+                                    mDatabase.collection("users").document(uid)
+                                            .collection("workoutlogs")
+                                            .document(""+n).set(wn);
+                                    Toast.makeText(CreateWorkout.this, comment.getText().toString(),Toast.LENGTH_LONG).show();
+
+                                    Intent intent = new Intent(CreateWorkout.this, ExerciseActivity.class);
+                                    startActivity(intent);
+                                }
+                            })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
         if (id == R.id.cancelWorkout) {
-            Intent intent = new Intent(this, LogWorkout.class);
+            Intent intent = new Intent(this, ExerciseActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

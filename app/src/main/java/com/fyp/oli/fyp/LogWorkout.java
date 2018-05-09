@@ -19,8 +19,11 @@ import android.widget.EditText;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -41,8 +44,9 @@ public class LogWorkout extends AppCompatActivity {
     DatabaseReference databaseReference;
     FirebaseAuth auth;
 
-    private FirestoreRecyclerAdapter<Exercise, ExerciseHolder> mAdapter;
+    private FirestoreRecyclerAdapter<Workout, WorkoutHolder> mAdapter;
     private FirebaseFirestore mDatabase;
+    DocumentReference ref;
     private ListenerRegistration firestoreListener;
 
     private LinearLayoutManager mManager;
@@ -104,57 +108,39 @@ public class LogWorkout extends AppCompatActivity {
         /*
             Loading the exercises into the exerciseList variable
          */
-        firestoreListener = mDatabase.collection("exercises").document(uid).collection("workoutlogs")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+        mDatabase.collection("exercises").document(uid).collection("workoutlogs")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.e(TAG, "Listen failed!", e);
-                            return;
-                        }
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            workoutList= new ArrayList<>();
 
-                        workoutList = new ArrayList<>();
+                            for(DocumentSnapshot doc : task.getResult()){
+                                Workout w = doc.toObject(Workout.class);
+                                w.setId(doc.getId());
+                                workoutList.add(w);
+                            }
+                            //do something with list of pojos retrieved
 
-                        for (DocumentSnapshot doc : documentSnapshots) {
-                            Workout workout = doc.toObject(Workout.class);
-                            workout.setId(doc.getId());
-                            //.setId(doc.getId());
-                            workoutList.add(workout);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
 
-        /*mAdapter = new FirestoreRecyclerAdapter<Workout, WorkoutHolder>(options) {
+        mAdapter = new FirestoreRecyclerAdapter<Workout, WorkoutHolder>(options) {
             @Override
             public WorkoutHolder onCreateViewHolder(ViewGroup group, int i) {
                 LayoutInflater inflater = LayoutInflater.from(group.getContext());
-                return new WorkoutHolder(inflater.inflate(R.layout.item_exercise, group, false));
+                return new WorkoutHolder(inflater.inflate(R.layout.item_workout_log, group, false));
             }
 
             @Override
             public void onBindViewHolder(final WorkoutHolder holder, final int position, final Workout model) {
-
-
                 holder.title.setText(model.getTitle());
-                holder.desc.setText(model.getDescr());
+                holder.comment.setText(model.getComment());
 
-                *//*holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(WorkoutPlans.this, ExerciseDetail.class);
-                        intent.putExtra("ExercisePic", exercise.getImage());
-                        intent.putExtra("ExerciseId", exercise.getId());
-                        intent.putExtra("ExerciseTitle", exercise.getTitle());
-                        intent.putExtra("ExerciseDescr", exercise.getDescr());
-                        intent.putExtra("ExerciseSets", exercise.getSets());
-                        intent.putExtra("ExerciseReps", exercise.getReps());
-                        // intent.putExtra(ExerciseDetail.EXTRA_EXERCISE_KEY, exerciseKey);
-                        startActivity(intent);
-
-                        Log.e(TAG, "ID = " + exercise.getId() + "\nTitle= " + exercise.getTitle()
-                                + "\n = " + exercise.getSets()+ "\n " + exercise.getReps()+ "\n " + exercise.getDescr());
-                    }
-                });*//*
+                
             }
 
             @Override
@@ -162,7 +148,7 @@ public class LogWorkout extends AppCompatActivity {
                 Log.e("error", e.getMessage());
             }
 
-        };*/
+        };
 
         mRecycler.setAdapter(mAdapter);
     }

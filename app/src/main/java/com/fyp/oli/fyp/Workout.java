@@ -20,12 +20,12 @@ public class Workout {
     public void setId(String id){this.id = this.id;}
     public String getId(){return id;}
 
-    public void setDesc(){
-        this.descr = descr;
+    public void setComment(){
+        this.comment = comment;
     }
 
-    public String getDescr() {
-        return descr;
+    public String getComment() {
+        return comment;
     }
 
     public void setTitle(){
