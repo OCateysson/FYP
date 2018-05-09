@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class LogWorkout extends AppCompatActivity {
@@ -41,6 +43,7 @@ public class LogWorkout extends AppCompatActivity {
     private static final String TAG = "ExerciseList";
     private List<Workout> workoutList;
     final Context mContext = this;
+    private Workout w1;
     DatabaseReference databaseReference;
     FirebaseAuth auth;
 
@@ -98,9 +101,8 @@ public class LogWorkout extends AppCompatActivity {
             }
         });
 
-        Query workoutLogQuery = mDatabase.collection("users").document(uid).collection("workoutlogs");
+        final Query workoutLogQuery = mDatabase.collection("users").document(uid).collection("workoutlogs");
 
-        Log.e(TAG, "Query = " + workoutLogQuery);
         FirestoreRecyclerOptions<Workout> options = new FirestoreRecyclerOptions.Builder<Workout>()
                 .setQuery(workoutLogQuery, Workout.class)
                 .build();
@@ -109,21 +111,22 @@ public class LogWorkout extends AppCompatActivity {
             Loading the exercises into the exerciseList variable
          */
         mDatabase.collection("exercises").document(uid).collection("workoutlogs")
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            workoutList= new ArrayList<>();
+                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.e(TAG, "Listen failed!", e);
+                            return;
+                        }
 
-                            for(DocumentSnapshot doc : task.getResult()){
-                                Workout w = doc.toObject(Workout.class);
-                                w.setId(doc.getId());
-                                workoutList.add(w);
-                            }
-                            //do something with list of pojos retrieved
+                        workoutList = new ArrayList<>();
 
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        for (DocumentSnapshot doc : documentSnapshots) {
+                            Workout workout= doc.toObject(Workout.class);
+                            workout.setId(doc.getId());
+                            //.setId(doc.getId());
+                            workoutList.add(workout);
+                            Log.e(TAG, "ID = " + workoutList);
                         }
                     }
                 });
@@ -137,10 +140,20 @@ public class LogWorkout extends AppCompatActivity {
 
             @Override
             public void onBindViewHolder(final WorkoutHolder holder, final int position, final Workout model) {
+
+                // w1 = workoutList.get(position);
+
                 holder.title.setText(model.getTitle());
                 holder.comment.setText(model.getComment());
 
-                
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(LogWorkout.this, ShowWorkout.class);
+                        //intent.putExtra("name", w1.getTitle());
+                        // startActivity(intent);
+                    }
+                });
             }
 
             @Override

@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg2"
+    >
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/choose_exercise_list"
@@ -25,6 +27,8 @@
         android:layout_alignParentRight="true"
         android:layout_margin="40dp"
         android:clickable="true"
+
+        app:backgroundTint="#4EB2F4"
         app:srcCompat="@android:drawable/ic_menu_add" />
 
 </RelativeLayout>

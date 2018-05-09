@@ -3,24 +3,27 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
+
     <EditText
         android:id="@+id/promptSets"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
-        android:hint="Enter Number of Sets" />
+        android:layout_marginTop="16dp"
+        android:hint="Enter Number of Sets"
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/promptReps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
-        android:hint="Enter Number of Reps" />
+        android:layout_marginTop="16dp"
+        android:hint="Enter Number of Reps"
+        android:inputType="number" />
 
 </LinearLayout>

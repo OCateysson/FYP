@@ -9,11 +9,10 @@ public class Workout {
 
     public Workout(){}
 
-    public Workout(String id, String title, String descr, String comment){
+    public Workout(String id, String title, String comment){
         this.id = id;
         this.comment = comment;
         this.title = title;
-        this.descr = descr;
 
     }
 

@@ -65,6 +65,7 @@ public class ChooseExercises extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_exercises);
 
+
         fab = findViewById(R.id.addToWorkout);
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 

@@ -46,7 +46,8 @@
         <activity android:name=".ExerciseList" />
         <activity android:name=".ChooseExercises" />
         <activity android:name=".CreateWorkout" />
-        <activity android:name=".NewPostActivity"></activity>
+        <activity android:name=".NewPostActivity" />
+        <activity android:name=".ShowWorkout"></activity>
     </application>
 
 </manifest>

@@ -1,7 +1,10 @@
 package com.fyp.oli.fyp;
 
+import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Image;
 import android.support.annotation.NonNull;
@@ -14,8 +17,12 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.Toast;
@@ -41,22 +48,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
 public class ExerciseActivity extends TabActivity {
 
     private static final String TAG = "ExerciseActivity";
-    /**
-     * Firestore Database
-     */
-
-
-    /*private DatabaseReference mDatabase;
-    private RecyclerView mRecycler;
-    private LinearLayoutManager mManager;
-    //private FirebaseRecyclerAdapter<Exercise,ExerciseViewHolder> mAdapter;*/
     private List<Exercise> exerciseList;
     private Context context;
     DatabaseReference databaseReference;
@@ -74,8 +74,9 @@ public class ExerciseActivity extends TabActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_exercise);
-        //mDatabase = FirebaseFirestore.getInstance();
+
         /**
          * Firestore
          */
@@ -110,9 +111,9 @@ public class ExerciseActivity extends TabActivity {
         mTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
-                // display the name of the tab whenever a tab is changed
-                Toast.makeText(getApplicationContext(), tabId, Toast.LENGTH_SHORT).show();
+
             }
         });
     }
+
 }
